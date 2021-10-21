@@ -1,0 +1,20 @@
+{
+    "properties": {
+        "displayName": "Deny non-tagged resources",
+        "description": "This policy prevents creation of resources that do not have defined tags.",
+        "mode": "Indexed",
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "tags",
+                        "exists": false
+                    }
+                ]
+            },
+            "then": {
+                "effect": "deny"
+            }
+        }
+    }
+}
