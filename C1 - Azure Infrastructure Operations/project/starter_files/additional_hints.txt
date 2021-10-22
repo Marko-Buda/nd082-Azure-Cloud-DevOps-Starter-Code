@@ -1,0 +1,24 @@
+Additional commands and hints:
+
+Import a already created resource group to a terraform template:
+  > terraform import azurerm_resource_group.main /subscriptions/f02a9f7c-1737-4a80-911e-44f7e8c03f11/resourceGroups/project-one-resource-group
+
+Resource azurerm_virtual_machine_data_disk_attachment must link virtual machine and managed_disk resource. 
+
+Example for 
+variable "input_number_of_vm" {
+  description = "The number VM that need to be deployed on Azure Cloud"  
+
+  validation {
+    condition = var.input_number_of_vm >= 2 && var.input_number_of_vm <= 5
+    error_message = "The minimum number of VM to be deployed is 2 and due to cost reasons cannot be more than 5."
+  }   
+}
+
+locals {
+  requested_vm_deployment_size = var.input_number_of_vm.validation.condition == true ? var.input_number_of_vm : 2
+}
+
+Variable for adding count.index which goes from zero to the number referenced in count
+-${count.index}
+

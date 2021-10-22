@@ -12,6 +12,8 @@ resource "azurerm_virtual_network" "main" {
   address_space       = ["10.0.0.0/16"]
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
+
+  tags = var.tags
 }
 
 resource "azurerm_subnet" "main" {
@@ -26,6 +28,8 @@ resource "azurerm_public_ip" "main" {
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
   allocation_method   = "Static"
+
+  tags = var.tags
 }
 
 resource "azurerm_lb" "main" {
@@ -47,8 +51,8 @@ resource "azurerm_lb_backend_address_pool" "main" {
 }
 
 resource "azurerm_network_interface" "main" {
-  //count = var.input_vm_deployment_size >= 2 && var.input_vm_deployment_size <= 5 ? var.input_vm_deployment_size : 1
-  name                = "${var.prefix}-nic"
+  count = var.input_number_of_vm >= 2 && var.input_number_of_vm <= 5 ? var.input_number_of_vm : 2
+  name                = "${var.prefix}-nic-${count.index}"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
 
@@ -57,11 +61,13 @@ resource "azurerm_network_interface" "main" {
     subnet_id                     = azurerm_subnet.main.id
     private_ip_address_allocation = "Dynamic"
   }
+
+  tags = var.tags
 }
 
 resource "azurerm_network_interface_backend_address_pool_association" "main" {
-  //count = var.input_vm_deployment_size >= 2 && var.input_vm_deployment_size <= 5 ? var.input_vm_deployment_size : 1
-  network_interface_id    = azurerm_network_interface.main.id
+  count = var.input_number_of_vm >= 2 && var.input_number_of_vm <= 5 ? var.input_number_of_vm : 2
+  network_interface_id    = azurerm_network_interface.main[count.index].id
   ip_configuration_name   = "${var.prefix}-nic"
   backend_address_pool_id = azurerm_lb_backend_address_pool.main.id
 }
@@ -85,7 +91,7 @@ resource "azurerm_network_security_group" "main" {
 
   security_rule {
     name                       = "Allow-VM-outbound-communication-inside-virtual-network"
-    priority                   = 105
+    priority                   = 102
     direction                  = "Outbound"
     access                     = "Allow"
     protocol                   = "Tcp"
@@ -119,6 +125,30 @@ resource "azurerm_network_security_group" "main" {
     destination_address_prefix = "Internet"
   }
 
+  security_rule {
+    name                       = "Allow-Lb_inbound-communication-inside-virtual-network"
+    priority                   = 106
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "AzureLoadBalancer"
+    destination_address_prefix = "VirtualNetwork"
+  }
+
+  security_rule {
+    name                       = "Allow-Lb-outbound-communication-inside-virtual-network"
+    priority                   = 108
+    direction                  = "Outbound"
+    access                     = "Allow"
+    protocol                   = "*"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "VirtualNetwork"
+    destination_address_prefix = "AzureLoadBalancer"
+  }
+
   tags = var.tags
 }
 
@@ -140,8 +170,8 @@ data "azurerm_image" "image" {
 }
 
 resource "azurerm_linux_virtual_machine" "main" {
-  //count = var.input_vm_deployment_size >= 2 && var.input_vm_deployment_size <= 5 ? var.input_vm_deployment_size : 2
-  name                            = "${var.prefix}-vm"
+  count = var.input_number_of_vm >= 2 && var.input_number_of_vm <= 5 ? var.input_number_of_vm : 2
+  name                            = "${var.prefix}-vm-${count.index}"
   resource_group_name             = azurerm_resource_group.main.name
   location                        = azurerm_resource_group.main.location
   size                            = "Standard_D2s_v3"
@@ -149,18 +179,23 @@ resource "azurerm_linux_virtual_machine" "main" {
   admin_password                  = "${var.password}"
   disable_password_authentication = false
   network_interface_ids = [
-    azurerm_network_interface.main.id,
+    azurerm_network_interface.main[count.index].id,
   ]
   source_image_id = data.azurerm_image.image.id
+  availability_set_id = azurerm_availability_set.main.id
 
   os_disk {
+
     storage_account_type = "Standard_LRS"
     caching              = "ReadWrite"
   }
+
+  tags = var.tags
 }
 
 resource "azurerm_managed_disk" "main" {
-  name                 = "${var.prefix}-managed-disk"
+  count = var.input_number_of_vm >= 2 && var.input_number_of_vm <= 5 ? var.input_number_of_vm : 2
+  name                 = "${var.prefix}-managed-disk-${count.index}"
   location             = azurerm_resource_group.main.location
   resource_group_name  = azurerm_resource_group.main.name
   storage_account_type = "Standard_LRS"
@@ -171,26 +206,9 @@ resource "azurerm_managed_disk" "main" {
 }
 
 resource "azurerm_virtual_machine_data_disk_attachment" "main" {
-  managed_disk_id    = azurerm_managed_disk.main.id
-  virtual_machine_id = azurerm_linux_virtual_machine.main.id
+  count = var.input_number_of_vm >= 2 && var.input_number_of_vm <= 5 ? var.input_number_of_vm : 2
+  managed_disk_id    = azurerm_managed_disk.main[count.index].id
+  virtual_machine_id = azurerm_linux_virtual_machine.main[count.index].id
   lun                = "10"
   caching            = "ReadWrite"
 }
-
-//additional commands
-#  terraform import azurerm_resource_group.main /subscriptions/f02a9f7c-1737-4a80-911e-44f7e8c03f11/resourceGroups/project-one-resource-group
-#  azurerm_virtual_machine_data_disk_attachment
-#variable "input_vm_deployment_size" {
-#  description = "The number VM that need to be deployed on Azure Cloud"  
-
-#  validation {
-#    condition = var.input_vm_deployment_size >= 2 && var.input_vm_deployment_size <= 5
-#    error_message = "The minimum number of VM to be deployed is 2 and due to cost reasons cannot be more than 5."
-#  }   
-#}
-
-#locals {
-#  requested_vm_deployment_size = var.input_vm_deployment_size.validation.condition == true ? var.input_vm_deployment_size : 2
-#}
-
-#-${count.index}

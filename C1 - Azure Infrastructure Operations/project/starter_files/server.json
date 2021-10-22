@@ -19,7 +19,7 @@
 		"managed_image_resource_group_name": "project-one-resource-group",
 		"managed_image_name": "UbuntuPackerImage",
 
-		"location": "East US",
+		"location": "West US",
 		"vm_size": "Standard_D2s_v3",
 		"azure_tags": {
 		  "project": "Project 1 from Udacity DevOps course",

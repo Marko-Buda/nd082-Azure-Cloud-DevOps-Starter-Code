@@ -12,9 +12,9 @@ variable "packer_image_name" {
   default     = "UbuntuPackerImage"
 }
 
-//variable "input_vm_deployment_size" {
-//  description = "The number VM that need to be deployed on Azure Cloud"  
-//}
+variable "input_number_of_vm" {
+  description = "The number VM that need to be deployed on Azure Cloud"  
+}
 
 variable "tags" {
   description = "Tags need to be defined so that resources can be created on Azure"
