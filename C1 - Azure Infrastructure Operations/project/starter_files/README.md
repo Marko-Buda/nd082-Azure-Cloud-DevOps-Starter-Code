@@ -15,7 +15,7 @@ For this project, you will write a Packer template and a Terraform template to d
 5. Run **az policy assignment create** with additional paramenters --name (name of the policy assignment) --policy (name of created policy definition).
 
 6. If no errors appear during the previous step, the policy should be visible by running command  **az policy assignment list**. 
-    > **NOTE**: It will display two policies. One default that is automatically provided by Azure itself and the other one is the one we created. <br /> On the following [link]() you can view the screenshoot of the output of that command.
+    > **NOTE**: It will display two policies. One default that is automatically provided by Azure itself and the other one is the one we created. <br /> On the following [link](https://github.com/Marko-Buda/nd082-Azure-Cloud-DevOps-Starter-Code/blob/master/C1%20-%20Azure%20Infrastructure%20Operations/project/starter_files/tagging-policy-screenshot.JPG) you can view the screenshoot of the output of that command.
 
 ### Dependencies
 1. Create an [Azure Account](https://portal.azure.com) 
@@ -25,20 +25,31 @@ For this project, you will write a Packer template and a Terraform template to d
 
 ### Instructions
 
-1. Before building a packer image please create in Azure Portal a resource group that contains the same name mentioned in 
-   > **packer validate** 
-2. Run **packer build** and wait for the build to finish with message:
+1. Before building a packer image please create a resources group with the following command **az group create -l (location of region for deployment of virtual machines) -n (the name of the resource group)** 
+    > **NOTE:** The name of the resource group set here is the one that will be used during the build of packer template and the deployment of terraform template. 
+2. Run command  **packer validate** to check that no syntax errors are present.
+3. Run **packer build** and wait for the build to finish with message:
     > Build 'azure-arm' finished after 5 minutes 23 seconds.<br />
 ==> Wait completed after 5 minutes 23 seconds<br />
 ==> Builds finished. The artifacts of successful builds are:<br />
 --> azure-arm: Azure.ResourceManagement.VMImage:
-3. Go to Azure portal and check that a image named _"UbuntuPackerImage"_ is created under resource group _"project-one-resource-group"_.
-4. Return to terminal.
-5. Run **terraform validate** to check that no syntax errors are present.
-6. Run **terraform plan** and enter the number of Virtual Machines that you want to deploy and the location of their deployment.
+4. Go to Azure portal and check that a image named _"UbuntuPackerImage"_ is created under resource group _"project-one-resource-group"_.
+5. Return to terminal.
+6. Run **terraform validate** to check that no syntax errors are present.
+7. Run **terraform plan** and enter the number of Virtual Machines that you want to deploy and the location of their deployment.
 
     > **NOTE**: The location of VM deployment must be the same as the one set in packer image. Otherwise expect terraform to return an error regarding the wrongly set location.<br /> This command creates an execution plan. It will tell you the number of resources that are going to be created.
-7. If no error appears in the previous step run **terraform apply** command and wait for it to finish deployment (this usually take several minutes).
+
+8. If no error appears in the previous step run **terraform apply** command and wait for it to finish deployment (this usually take several minutes).
+    > **NOTE:** If an error "cannot create an already existing resource group" appears, please run the following command **_terraform import azurerm_resource_group.main /subscriptions/"subscription-id"/resourceGroups/"resource_group_name"_**. <br />
+    This command links resource group that is created on azure portal with the one in which we want to deploy our resources to.<br /> Repeat this instruction step 8.
+
+#### User Modifications 
+* User can modify the input arguments during the instructions step 7 by modifying default value of arguments in [vars.tf](https://github.com/Marko-Buda/nd082-Azure-Cloud-DevOps-Starter-Code/blob/master/C1%20-%20Azure%20Infrastructure%20Operations/project/starter_files/vars.tf) file.
+* This file contains all the user input variables that can be changed from the password used to login into virtual machine to project name listed in tags variable.
+* To change, for example project name, user can either hard-code a new value instead of the one currently set or he can completely remove the _default_ atribute. This would prompt an input request for project name from user when step 7 was repeated.
+* If the user wants to avoid setting inputs he can do so by adding _default =_ "string" inside _variable_ brackets.
+
 
 ### Output
 After you succesfully deploy your IaaS web server you should receive the following message:
