@@ -170,10 +170,16 @@ resource "azurerm_managed_disk" "main" {
   tags = var.tags
 }
 
+resource "azurerm_virtual_machine_data_disk_attachment" "main" {
+  managed_disk_id    = azurerm_managed_disk.main.id
+  virtual_machine_id = azurerm_linux_virtual_machine.main.id
+  lun                = "10"
+  caching            = "ReadWrite"
+}
 
 //additional commands
 #  terraform import azurerm_resource_group.main /subscriptions/f02a9f7c-1737-4a80-911e-44f7e8c03f11/resourceGroups/project-one-resource-group
-#
+#  azurerm_virtual_machine_data_disk_attachment
 #variable "input_vm_deployment_size" {
 #  description = "The number VM that need to be deployed on Azure Cloud"  
 
