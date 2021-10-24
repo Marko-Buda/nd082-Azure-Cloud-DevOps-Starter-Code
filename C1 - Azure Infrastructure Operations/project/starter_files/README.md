@@ -10,9 +10,9 @@ The three main parts are: &nbsp;&nbsp;1. Policy definition and assignment<br />
 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; 3. Terraform template creation and deployment
 
 For the web server to be succesfully deployed the above mentioned parts need to be done in the order they were listed.<br />
-* Policy definition and assignment instructions are mentioned [here](https://github.com/Marko-Buda/nd082-Azure-Cloud-DevOps-Starter-Code/blob/master/C1%-%Azure%Infrastructure%Operations/project/starter_files#getting-started) under steps 4. to 6. <br />
-* Packer template creation and build instructions are mentioned [here](https://github.com/Marko-Buda/nd082-Azure-Cloud-DevOps-Starter-Code/blob/master/C1%-%Azure%Infrastructure%Operations/project/starter_files#instructions) under steps 3. and 4. <br />
-* Terraform template creation and deployment instructions are mentioned [here](https://github.com/Marko-Buda/nd082-Azure-Cloud-DevOps-Starter-Code/blob/master/C1%-%Azure%Infrastructure%Operations/project/starter_files#instructions) under steps 6. to 8. <br />
+* Policy definition and assignment instructions are mentioned [here](https://github.com/Marko-Buda/nd082-Azure-Cloud-DevOps-Starter-Code/tree/master/C1%20-%20Azure%20Infrastructure%20Operations/project/starter_files#getting-started) under steps 4. to 6. <br />
+* Packer template creation and build instructions are mentioned [here](https://github.com/Marko-Buda/nd082-Azure-Cloud-DevOps-Starter-Code/tree/master/C1%20-%20Azure%20Infrastructure%20Operations/project/starter_files#instructions) under steps 3. and 4. <br />
+* Terraform template creation and deployment instructions are mentioned [here](https://github.com/Marko-Buda/nd082-Azure-Cloud-DevOps-Starter-Code/tree/master/C1%20-%20Azure%20Infrastructure%20Operations/project/starter_files#instructions) under steps 6. to 8. <br />
 
 ### Getting Started
 1. Clone this repository using command _git clone_ (link to repository [here](https://github.com/Marko-Buda/nd082-Azure-Cloud-DevOps-Starter-Code.git)).
@@ -44,7 +44,7 @@ For the web server to be succesfully deployed the above mentioned parts need to 
 ==> Wait completed after 5 minutes 23 seconds<br />
 ==> Builds finished. The artifacts of successful builds are:<br />
 --> azure-arm: Azure.ResourceManagement.VMImage:<br /> <br />
-    **NOTE:**  Additionaly if the user wants to compare his output with the one here, he can do so by looking at following screenshots: [packer_part1](https://github.com/Marko-Buda/nd082-Azure-Cloud-DevOps-Starter-Code/blob/master/C1%-%Azure%Infrastructure%Operations/project/starter_files/packer_build_output_part1.png) and [packer_part2](https://github.com/Marko-Buda/nd082-Azure-Cloud-DevOps-Starter-Code/blob/master/C1%-%Azure%Infrastructure%Operations/project/starter_files/packer_build_output_part2.png)
+    **NOTE:**  Additionaly if the user wants to compare his output with the one here, he can do so by looking at following screenshots: [packer_part1](https://github.com/Marko-Buda/nd082-Azure-Cloud-DevOps-Starter-Code/blob/master/C1%20-%20Azure%20Infrastructure%20Operations/project/starter_files/packer_build_output_part1.png) and [packer_part2](https://github.com/Marko-Buda/nd082-Azure-Cloud-DevOps-Starter-Code/blob/master/C1%20-%20Azure%20Infrastructure%20Operations/project/starter_files/packer_build_output_part2.png)
 4. Go to Azure portal and check that a image named _"UbuntuPackerImage"_ is created under resource group _"project-one-resource-group"_.
 5. Return to terminal.
 6. Run **terraform validate** to check that no syntax errors are present.
@@ -71,4 +71,4 @@ The 19 added resources are total number of the resources that were created when 
 
 The expected output of terraform plan can be viewed on this [link](https://github.com/Marko-Buda/nd082-Azure-Cloud-DevOps-Starter-Code/blob/master/C1%20-%20Azure%20Infrastructure%20Operations/project/starter_files/solution.plan).
 
-For additional check to see if you have built everything correctly you can compare your output with ones listed here: [terraform_part1](https://github.com/Marko-Buda/nd082-Azure-Cloud-DevOps-Starter-Code/blob/master/C1%-%Azure%Infrastructure%Operations/project/starter_files/terraform_apply_part1.png) and [terraform_part2](https://github.com/Marko-Buda/nd082-Azure-Cloud-DevOps-Starter-Code/blob/master/C1%-%Azure%Infrastructure%Operations/project/starter_files/terraform_apply_part2.png). 
+For additional check to see if you have built everything correctly you can compare your output with ones listed here: [terraform_part1](https://github.com/Marko-Buda/nd082-Azure-Cloud-DevOps-Starter-Code/blob/master/C1%20-%20Azure%20Infrastructure%20Operations/project/starter_files/terraform_apply_part1.png) and [terraform_part2](https://github.com/Marko-Buda/nd082-Azure-Cloud-DevOps-Starter-Code/blob/master/C1%20-%20Azure%20Infrastructure%20Operations/project/starter_files/terraform_apply_part2.png). 
