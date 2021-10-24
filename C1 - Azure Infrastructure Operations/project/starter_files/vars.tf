@@ -5,6 +5,7 @@ variable "prefix" {
 
 variable "location" {
   description = "The Azure Region in which all resources will be created."
+  default     = "westus"
 }
 
 variable "packer_image_name" {
@@ -14,6 +15,8 @@ variable "packer_image_name" {
 
 variable "input_number_of_vm" {
   description = "The number VM that need to be deployed on Azure Cloud"  
+  type        = number
+  default     = 2
 }
 
 variable "tags" {

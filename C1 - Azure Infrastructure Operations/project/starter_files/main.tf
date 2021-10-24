@@ -72,14 +72,32 @@ resource "azurerm_network_interface_backend_address_pool_association" "main" {
   backend_address_pool_id = azurerm_lb_backend_address_pool.main.id
 }
 
+resource "azurerm_network_interface_security_group_association" "main" {
+  count = var.input_number_of_vm >= 2 && var.input_number_of_vm <= 5 ? var.input_number_of_vm : 2
+  network_interface_id      = azurerm_network_interface.main[count.index].id
+  network_security_group_id = azurerm_network_security_group.main.id
+}
+
 resource "azurerm_network_security_group" "main" {
   name                = "${var.prefix}-Security-Group-One"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
 
   security_rule {
-    name                       = "Allow-VM-inbound-communication-inside-virtual-network"
+    name                       = "Deny-inbound-communication-from-internet"
     priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Deny"
+    protocol                   = "*"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name                       = "Allow-VM-inbound-communication-inside-virtual-network"
+    priority                   = 105
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
@@ -91,7 +109,7 @@ resource "azurerm_network_security_group" "main" {
 
   security_rule {
     name                       = "Allow-VM-outbound-communication-inside-virtual-network"
-    priority                   = 102
+    priority                   = 110
     direction                  = "Outbound"
     access                     = "Allow"
     protocol                   = "Tcp"
@@ -102,32 +120,8 @@ resource "azurerm_network_security_group" "main" {
   }
 
   security_rule {
-    name                       = "Deny-inbound-communication-from-outbound-network"
-    priority                   = 110
-    direction                  = "Inbound"
-    access                     = "Deny"
-    protocol                   = "*"
-    source_port_range          = "*"
-    destination_port_range     = "*"
-    source_address_prefix      = "Internet"
-    destination_address_prefix = "VirtualNetwork"
-  }
-
-  security_rule {
-    name                       = "Deny-outbound-communication-from-inbound-network"
-    priority                   = 115
-    direction                  = "Outbound"
-    access                     = "Deny"
-    protocol                   = "*"
-    source_port_range          = "*"
-    destination_port_range     = "*"
-    source_address_prefix      = "VirtualNetwork"
-    destination_address_prefix = "Internet"
-  }
-
-  security_rule {
     name                       = "Allow-Lb_inbound-communication-inside-virtual-network"
-    priority                   = 106
+    priority                   = 115
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
@@ -139,7 +133,7 @@ resource "azurerm_network_security_group" "main" {
 
   security_rule {
     name                       = "Allow-Lb-outbound-communication-inside-virtual-network"
-    priority                   = 108
+    priority                   = 120
     direction                  = "Outbound"
     access                     = "Allow"
     protocol                   = "*"
